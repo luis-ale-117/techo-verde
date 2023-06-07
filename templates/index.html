@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{url_for('static', filename='img/arbol.png')}}"/>
+    <!--Para usar la libreria 'letleaf'-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+    <!--Estilos-->
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/map.css')}}"/>
+    <title>Techos verdes</title>
+</head>
+<body>
+    <header>
+        </h1>Techo verdes en la CDMX</h1>
+    </header>
+    <main>
+        <form id="registro">
+            <label for="correo-contacto">Correo de contacto</label>
+            <input id="correo-contacto" name="correo-contacto" type="email" placeholder="correo@ejemplo.com" required></input>
+
+            <label for="tipo-techo">Tipo de techo verde</label>
+            <select id="tipo-techo" name="tipo-techo" required>
+                <option value="extensivo" default>Extensivo (de 110 hasta 200kg/m2)</option>
+                <option value="semi-intensivo">Semi-intensivo (mayor a 200 y hasta 350 kg/m2)</option>
+                <option value="intensivo">Intensivo (mayor a 350 kg/m2)</option>
+            </select>
+
+            <label for="vegetacion">Vegetacion</label>
+            <input id="vegetacion" name="vegetacion" type="text" placeholder="De desierto, de bosque, etc" required></input>
+
+            <label for="superficie">Superficie del techo en m2</label>
+            <input id="superficie" name="superficie" type="number" value="1" min="1" max="10000" required></input>
+
+            <label for="tipo-inmueble">Tipo de inmueble</label>
+            <select id="tipo-inmueble" name="tipo-inmueble" required>
+                <option value="casa-habitacion" default>Casa habitacion</option>
+                <option value="edificio-de-departamentos">Edificio de departamentos</option>
+                <option value="local-comercial">Local comercial</option>
+                <option value="oficinas privadas">Oficinas privadas</option>
+            </select>
+
+            <label for="numero-pisos">Numero de pisos del inmueble</label>
+            <input id="numero-pisos" name="numero-pisos" type="number" value="0" min="0" max="1000" required></input>
+
+            <legend>¿Esta ubicado en el ultimo piso?</legend>
+            <label for="ubicacion-ultimo-piso-si">Si</label>
+            <input id="ubicacion-ultimo-piso-si" name="ubicacion-ultimo-piso" type="radio" value="si" checked required></input>
+            <label for="ubicacion-ultimo-piso-no">No</label>
+            <input id="ubicacion-ultimo-piso-no" name="ubicacion-ultimo-piso" type="radio" value="no"></input>
+            <label for="otro-piso">Indica el piso</label>
+            <input id="otro-piso" name="otro-piso" type="number" value="0" min="0" max="1000"></input>
+
+            <legend>¿Solicitaste el beneficio fiscal del 10% en la reducción del impuesto predial?</legend>
+            <label for="beneficio-fiscal-si">Si</label>
+            <input id="beneficio-fiscal-si" name="beneficio-fiscal" type="radio" value="si" checked required></input>
+            <label for="beneficio-fiscal-no">No</label>
+            <input id="beneficio-fiscal-no" name="beneficio-fiscal" type="radio" value="no"></input>
+            <label for="beneficio-fiscal-no-sabia">No sabia que existia</label>
+            <input id="beneficio-fiscal-no-sabia" name="beneficio-fiscal" type="radio" value="no-sabia"></input>
+
+            <legend>¿Cómo instalaste el techo verde?</legend>
+            <label for="instalacion-empresa">Contrate una empresa</label>
+            <input id="instalacion-empresa" name="instalacion" type="radio" value="empresa" checked required></input>
+            <label for="instalacion-propia">Lo instale yo solo</label>
+            <input id="instalacion-propia" name="instalacion" type="radio" value="propia"></input>
+            <label for="empresa-instaladora">Indica el nombre de la empresa que se contrato</label>
+            <input id="empresa-instaladora" name="empresa-instaladora" type="text" placeholder="Nombre de la empresa"></input>
+
+            <label for="imagenes">Ingresa tus imagenes (hasta 10 de maximo 5MB)</label>
+            <input id="imagenes" name="imagenes" type="file" accept="image/png, image/jpeg" size="5000000"></input>
+            
+            <legend>Ubicacion del inmueble</legend>
+            <label for="pais">Pais</label>
+            <input id="pais" name="pais" type="text" required></input>
+            <label for="estado">Estado</label>
+            <input id="estado" name="estado" type="text" required></input>
+            <label for="ciudad">Ciudad</label>
+            <input id="ciudad" name="ciudad" type="text" required></input>
+            <label for="calle">Calle</label>
+            <input id="calle" name="calle" type="text" required></input>
+            <label for="codigo-postal">Codigo postal</label>
+            <input id="codigo-postal" name="codigo-postal" type="text" required></input>
+        </form>
+        <div id="map"></div>
+    </main>
+    <footer></footer>
+    <script src="{{url_for('static', filename='scripts/map.js')}}"></script>
+</body>
+</html>
