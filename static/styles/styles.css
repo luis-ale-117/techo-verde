@@ -23,3 +23,8 @@
 .underline-on-hover:hover::before {
     transform: scaleX(1);
 }
+
+.invisible {
+    display: none;
+    pointer-events: none;
+}

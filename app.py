@@ -2,9 +2,9 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/registro")
 def index():
-    return render_template("index.html")
+    return render_template("registro.html")
 
 @app.route("/atribucion")
 def atribucion():

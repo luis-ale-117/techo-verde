@@ -31,15 +31,15 @@
         <form id="registro" class="row g-2">
             <!-- CORREO ELECTRONICO-->
             <div class="col-md-6">
-                <label for="correo-contacto" class="form-label">Correo de contacto</label>
-                <input id="correo-contacto" name="correo-contacto" type="email" placeholder="correo@ejemplo.com"
+                <label for="correo_contacto" class="form-label">Correo de contacto</label>
+                <input id="correo_contacto" name="correo_contacto" type="email" placeholder="correo@ejemplo.com"
                     required class="form-control"></input>
             </div>
 
             <!--TIPO DE TECHO VERDE-->
             <div class="col-md-6">
-                <label for="tipo-techo" class="form-label">Tipo de techo verde</label>
-                <select id="tipo-techo" name="tipo-techo" required class="form-select">
+                <label for="tipo_techo" class="form-label">Tipo de techo verde</label>
+                <select id="tipo_techo" name="tipo_techo" required class="form-select">
                     <option value="extensivo" default>Extensivo (de 110 hasta 200kg/m2)</option>
                     <option value="semi-intensivo">Semi-intensivo (mayor a 200 y hasta 350 kg/m2)</option>
                     <option value="intensivo">Intensivo (mayor a 350 kg/m2)</option>
@@ -62,8 +62,8 @@
 
             <!--TIPO DE INMUEBLE-->
             <div class="col-md-6">
-                <label for="tipo-inmueble" class="form-label">Tipo de inmueble</label>
-                <select id="tipo-inmueble" name="tipo-inmueble" required class="form-select">
+                <label for="tipo_inmueble" class="form-label">Tipo de inmueble</label>
+                <select id="tipo_inmueble" name="tipo_inmueble" required class="form-select">
                     <option value="casa-habitacion" default>Casa habitacion</option>
                     <option value="edificio-de-departamentos">Edificio de departamentos</option>
                     <option value="local-comercial">Local comercial</option>
@@ -73,8 +73,8 @@
 
             <!--NUMERO DE PISOS DEL INMUEBLE-->
             <div class="col-md-6">
-                <label for="numero-pisos" class="form-label">Numero de pisos del inmueble</label>
-                <input id="numero-pisos" name="numero-pisos" type="number" value="0" min="0" max="1000" required
+                <label for="numero_pisos" class="form-label">Numero de pisos del inmueble</label>
+                <input id="numero_pisos" name="numero_pisos" type="number" value="0" min="0" max="1000" required
                     class="form-control"></input>
             </div>
 
@@ -82,18 +82,18 @@
             <div class="col-md-6">
                 <label class="form-label">¿Esta ubicado en el ultimo piso?</label>
                 <div class="form-check">
-                    <input id="ubicacion-ultimo-piso-si" name="ubicacion-ultimo-piso" type="radio" value="si"
+                    <input id="ubicacion_ultimo_piso_si" name="ubicacion_ultimo_piso" type="radio" value="si" checked required
                         class="form-check-input"></input>
-                    <label for="ubicacion-ultimo-piso-si" class="form-check-label">Si</label>
+                    <label for="ubicacion_ultimo_piso_si" class="form-check-label">Si</label>
                 </div>
                 <div class="form-check">
-                    <input id="ubicacion-ultimo-piso-no" name="ubicacion-ultimo-piso" type="radio" value="no"
+                    <input id="ubicacion_ultimo_piso_no" name="ubicacion_ultimo_piso" type="radio" value="no"
                         class="form-check-input"></input>
-                    <label for="ubicacion-ultimo-piso-no" class="form-check-label">No</label>
+                    <label for="ubicacion_ultimo_piso_no" class="form-check-label">No</label>
                 </div>
-                <div class="mb-3">
-                    <label for="otro-piso" class="form-label">Indica el piso</label>
-                    <input id="otro-piso" name="otro-piso" type="number" value="0" min="0" max="1000"
+                <div id="div_otro_piso" class="mb-3">
+                    <label for="otro_piso" class="form-label">Indica el piso</label>
+                    <input id="otro_piso" name="otro_piso" type="number" value="0" min="0" max="1000"
                         class="form-control"></input>
                 </div>
             </div>
@@ -103,19 +103,19 @@
                 <label class="form-label">¿Solicitaste el beneficio fiscal del 10% en la reducción del impuesto
                     predial?</label>
                 <div class="form-check">
-                    <input id="beneficio-fiscal-si" name="beneficio-fiscal" type="radio" value="si" checked required
+                    <input id="beneficio_fiscal_si" name="beneficio_fiscal" type="radio" value="si" checked required
                         class="form-check-input"></input>
-                    <label for="beneficio-fiscal-si" class="form-check-label">Si</label>
+                    <label for="beneficio_fiscal_si" class="form-check-label">Si</label>
                 </div>
                 <div class="form-check">
-                    <input id="beneficio-fiscal-no" name="beneficio-fiscal" type="radio" value="no"
+                    <input id="beneficio_fiscal_no" name="beneficio_fiscal" type="radio" value="no"
                         class="form-check-input"></input>
-                    <label for="beneficio-fiscal-no" class="form-check-label">No</label>
+                    <label for="beneficio_fiscal_no" class="form-check-label">No</label>
                 </div>
                 <div class="form-check">
-                    <input id="beneficio-fiscal-no-sabia" name="beneficio-fiscal" type="radio" value="no-sabia"
+                    <input id="beneficio_fiscal_no-sabia" name="beneficio_fiscal" type="radio" value="no-sabia"
                         class="form-check-input"></input>
-                    <label for="beneficio-fiscal-no-sabia" class="form-check-label">No sabia que existia</label>
+                    <label for="beneficio_fiscal_no-sabia" class="form-check-label">No sabia que existia</label>
                 </div>
             </div>
 
@@ -123,67 +123,49 @@
             <div class="col-md-6">
                 <label class="form-label">¿Cómo instalaste el techo verde?</label>
                 <div class="form-check">
-                    <input id="instalacion-empresa" name="instalacion" type="radio" value="empresa" checked required
+                    <input id="instalacion_propia" name="instalacion" type="radio" value="propia" checked required
                         class="form-check-input"></input>
-                    <label for="instalacion-empresa" class="form-check-label">Contrate una empresa</label>
+                    <label for="instalacion_propia" class="form-check-label">Lo instale yo solo</label>
                 </div>
                 <div class="form-check">
-                    <input id="instalacion-propia" name="instalacion" type="radio" value="propia"
+                    <input id="instalacion_empresa" name="instalacion" type="radio" value="empresa"
                         class="form-check-input"></input>
-                    <label for="instalacion-propia" class="form-check-label">Lo instale yo solo</label>
+                    <label for="instalacion_empresa" class="form-check-label">Contrate una empresa</label>
                 </div>
-                <div class="mb-3">
-                    <label for="empresa-instaladora" class="form-label">Indica el nombre de la empresa que se
+                <div id="div_empresa_instaladora" class="mb-3">
+                    <label for="empresa_instaladora" class="form-label">Indica el nombre de la empresa que se
                         contrato</label>
-                    <input id="empresa-instaladora" name="empresa-instaladora" type="text"
+                    <input id="empresa_instaladora" name="empresa_instaladora" type="text"
                         placeholder="Nombre de la empresa" class="form-control"></input>
                 </div>
             </div>
 
             <!--INGRESA TUS IMAGENES-->
             <div class="col-md-6">
-                <label for="imagenes" class="form-label">Ingresa tus imagenes (hasta 10 de maximo 5MB)</label>
-                <input id="imagenes" name="imagenes" type="file" accept="image/png, image/jpeg" size="5000000"
+                <label for="imagenes" class="form-label">Ingresa tus imagenes (hasta 5 de maximo 5MB)</label>
+                <input id="imagenes" name="imagenes" type="file" accept="image/png, image/jpeg" size="5000000" multiple
                     class="form-control"></input>
             </div>
 
             <!--UBICACION DEL INMUEBLE-->
-            <label class="form-label">Ubicacion del inmueble</label>
-            <!-- <div class="col-md-3">
-                <label for="pais" class="form-label">Pais</label>
-                <input id="pais" name="pais" type="text" required class="form-control"></input>
+            <label class="form-label">Ingresa a <a href="https://www.google.com.mx/maps/preview">Google Maps</a> y compartenos la ubicacion con el boton de Compartir</label>
+            <div class="col-md-6">
+                <img src="{{url_for('static', filename='img/compartir.png')}}" alt="Imagen ilustrativa del boton de compartir en Google Maps" class="img-thumbnail" style="max-width: 400px;">
             </div>
-            <div class="col-md-3">
-                <label for="estado" class="form-label">Estado</label>
-                <input id="estado" name="estado" type="text" required class="form-control"></input>
+            <div class="col-md-6">
+                <label for="link_ubicacion" class="form-label">Link de ubicacion del inmueble</label>
+                <input id="link_ubicacion" name="link_ubicacion" type="text" placeholder="Ejemplo: https://goo.gl/maps/sAAHf8g42apofK967"
+                    required class="form-control"></input>
             </div>
-            <div class="col-md-3">
-                <label for="ciudad" class="form-label">Ciudad</label>
-                <input id="ciudad" name="ciudad" type="text" required class="form-control"></input>
-            </div>
-            <div class="col-md-3">
-                <label for="calle" class="form-label">Calle</label>
-                <input id="calle" name="calle" type="text" required class="form-control"></input>
-            </div>
-            <div class="col-md-3">
-                <label for="codigo-postal" class="form-label">Codigo postal</label>
-                <input id="codigo-postal" name="codigo-postal" type="text" required class="form-control"></input>
-            </div> -->
 
-            <div class="d-flex">
-                <input id="ubicacion" name="ubicacion" class="form-control me-2" type="search"
-                    placeholder="Calle 123 Col. Colonia CDMX Mexico" aria-label="Search">
-                <button class="btn btn-outline-dark" type="button">Buscar</button>
+            <div class="col-md-6">
+                <button id="enviar_formulario" type="submit" class="btn btn-primary">Enviar</button>
             </div>
         </form>
         <br>
-        <!--MAPA-->
-        <div id="map"></div>
-
     </main>
     <footer></footer>
-    <!--MAPA JS-->
-    <script src="{{url_for('static', filename='scripts/map.js')}}"></script>
+    <script src="{{url_for('static', filename='scripts/registro.js')}}"></script>
 </body>
 
 </html>
