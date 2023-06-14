@@ -28,7 +28,7 @@
     <br>
     <main class="container">
         <h1 class="h1">Registro de techos verdes en la CDMX</h1>
-        <form id="registro" class="row g-2">
+        <form id="registro" method="POST" action="/guardar_registro" enctype="multipart/form-data" class="row g-2">
             <!-- CORREO ELECTRONICO-->
             <div class="col-md-6">
                 <label for="correo_contacto" class="form-label">Correo de contacto</label>
@@ -143,7 +143,7 @@
             <!--INGRESA TUS IMAGENES-->
             <div class="col-md-6">
                 <label for="imagenes" class="form-label">Ingresa tus imagenes (hasta 5 de maximo 5MB)</label>
-                <input id="imagenes" name="imagenes" type="file" accept="image/png, image/jpeg" size="5000000" multiple
+                <input id="imagenes" name="imagenes" type="file" accept="image/png, image/jpeg" size="5000000" multiple required
                     class="form-control"></input>
             </div>
 
