@@ -6,12 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="{{url_for('static', filename='img/arbol.png')}}" />
-    <!--Estilos-->
-    <link rel="stylesheet" href="{{url_for('static', filename='styles/styles.css')}}" />
     <!--Bootstrap CSS-->
     <link rel="stylesheet" href="{{url_for('static', filename='styles/bootstrap.min.css')}}" />
     <!--Bootstrap JS-->
     <script src="{{url_for('static', filename='scripts/bootstrap.min.js')}}"></script>
+    <!--Estilos propios-->
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/styles.css')}}" />
     <title>Techos verdes</title>
 </head>
 
@@ -21,17 +21,65 @@
     </header>
     <main class="container">
         <h1 class="h1">Atribuciones de las imagenes</h1>
-        <div class="card" style="width: 12rem;">
-            <img src="{{url_for('static', filename='img/arbol.png')}}" alt="arbol.png" class="card-img-top"></img>
-            <div class="card-body">
-                <h5 class="card-title">Arbol</h5>
-                <p class="card-text">Árbol iconos creados por Freepik - Flaticon</p>
-                <a href="https://www.flaticon.es/iconos-gratis/arbol" title="árbol iconos"
-                    class="btn btn-primary">Ir</a>
+        <div class="card-group">
+            <div class="card" style="width: 12rem;">
+                <img src="{{url_for('static', filename='img/arbol.png')}}" alt="arbol.png" class="card-img-top"></img>
+                <div class="card-body">
+                    <h5 class="card-title">Arbol</h5>
+                    <p class="card-text">Árbol iconos creados por Freepik - Flaticon</p>
+                    <a href="https://www.flaticon.es/iconos-gratis/arbol" title="árbol iconos" target="_blank"
+                        rel="noopener noreferrer" class="btn btn-primary">Ver fuente</a>
+                </div>
+            </div>
+            <div class="card" style="width: 12rem;">
+                <img src="{{url_for('static', filename='img/comprobado.png')}}" alt="comprobado.png"
+                    class="card-img-top"></img>
+                <div class="card-body">
+                    <h5 class="card-title">Comprobado</h5>
+                    <p class="card-text">Garrapata iconos creados por Roundicons - Flaticon</p>
+                    <a href="https://www.flaticon.es/iconos-gratis/garrapata" title="garrapata iconos" target="_blank"
+                        rel="noopener noreferrer" class="btn btn-primary">Ver fuente</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-group">
+            <div class="card" style="width: 12rem;">
+                <img src="{{url_for('static', filename='img/ver-detalles.png')}}" alt="ver-detalles.png"
+                    class="card-img-top"></img>
+                <div class="card-body">
+                    <h5 class="card-title">Ver detalles</h5>
+                    <p class="card-text">Ver iconos creados por Freepik - Flaticon</p>
+                    <a href="https://www.flaticon.es/iconos-gratis/ver" title="ver iconos" target="_blank"
+                        rel="noopener noreferrer" class="btn btn-primary">Ver fuente</a>
+                </div>
+            </div>
+            <div class="card" style="width: 12rem;">
+                <img src="{{url_for('static', filename='img/borrar.png')}}" alt="borrar.png"
+                    class="card-img-top"></img>
+                <div class="card-body">
+                    <h5 class="card-title">Borrar</h5>
+                    <p class="card-text">Desinstalar iconos creados por Bharat Icons - Flaticon</p>
+                    <a href="https://www.flaticon.es/iconos-gratis/desinstalar" title="desinstalar iconos" target="_blank"
+                        rel="noopener noreferrer" class="btn btn-primary">Ver fuente</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-group">
+            <div class="card" style="width: 12rem;">
+                <img src="{{url_for('static', filename='img/error-404.png')}}" alt="error-404.png"
+                    class="card-img-top"></img>
+                <div class="card-body">
+                    <h5 class="card-title">Error 404</h5>
+                    <p class="card-text">404 iconos creados por Freepik - Flaticon</p>
+                    <a href=href="https://www.flaticon.es/iconos-gratis/404" title="404 iconos" target="_blank"
+                        rel="noopener noreferrer" class="btn btn-primary">Ver fuente</a>
+                </div>
             </div>
         </div>
     </main>
-    <footer></footer>
+    <footer class="container">
+        {% include 'footer.html'%}
+    </footer>
 </body>
 
 </html>

@@ -11,13 +11,13 @@
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <!--Estilos-->
-    <link rel="stylesheet" href="{{url_for('static', filename='styles/map.css')}}" />
-    <link rel="stylesheet" href="{{url_for('static', filename='styles/styles.css')}}" />
     <!--Bootstrap CSS-->
     <link rel="stylesheet" href="{{url_for('static', filename='styles/bootstrap.min.css')}}" />
     <!--Bootstrap JS-->
     <script src="{{url_for('static', filename='scripts/bootstrap.min.js')}}"></script>
+    <!--Estilos propios-->
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/map.css')}}" />
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/styles.css')}}" />
     <title>Resgistro techos verdes</title>
 </head>
 
@@ -27,7 +27,9 @@
     </header>
     <br>
     <main class="container">
-        <h1 class="h1">Registro de techos verdes en la CDMX</h1>
+        <div class="text-center">
+            <h1 class="h1">Registro de techos verdes en la CDMX</h1>
+        </div>
         <form id="registro" method="POST" action="/guardar_registro" enctype="multipart/form-data" class="row g-2">
             <!-- CORREO ELECTRONICO-->
             <div class="col-md-6">
@@ -148,7 +150,7 @@
             </div>
 
             <!--UBICACION DEL INMUEBLE-->
-            <label class="form-label">Ingresa a <a href="https://www.google.com.mx/maps/preview">Google Maps</a> y compartenos la ubicacion con el boton de Compartir</label>
+            <label class="form-label">Ingresa a <a href="https://www.google.com.mx/maps/preview" target="_blank" rel="noopener noreferrer">Google Maps</a> y compartenos la ubicacion con el boton de Compartir</label>
             <div class="col-md-6">
                 <img src="{{url_for('static', filename='img/compartir.png')}}" alt="Imagen ilustrativa del boton de compartir en Google Maps" class="img-thumbnail" style="max-width: 400px;">
             </div>
@@ -164,7 +166,9 @@
         </form>
         <br>
     </main>
-    <footer></footer>
+    <footer class="container">
+        {% include 'footer.html'%}
+    </footer>
     <script src="{{url_for('static', filename='scripts/registro.js')}}"></script>
 </body>
 
