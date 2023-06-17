@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{url_for('static', filename='img/arbol.png')}}" />
+    <!--Bootstrap CSS-->
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/bootstrap.min.css')}}" />
+    <!--Bootstrap JS-->
+    <script src="{{url_for('static', filename='scripts/bootstrap.min.js')}}"></script>
+    <!--Estilos propios-->
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/map.css')}}" />
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/styles.css')}}" />
+    <title>Resgistro techos verdes</title>
+</head>
+
+<body class="bg-secondary-subtle">
+    <header>
+        {% include 'navbar.html'%}
+    </header>
+    <br>
+    <main class="container text-center">
+        <h1 class="display-1">Error 500</h1>
+        <br>
+        <h3 class="display-6">Error en el servidor</h3>
+        <img src="{{url_for('static', filename='img/servidor-caido.png')}}" class="img-fluid" alt="Error 500">
+    </main>
+    <footer class="container">
+        {% include 'footer.html'%}
+    </footer>
+</body>
+
+</html>

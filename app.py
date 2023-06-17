@@ -60,6 +60,10 @@ def guardado_exitoso():
 def page_not_found(e):
     return render_template('404_not_found.html'), 404
 
+@app.errorhandler(500)
+def page_not_found(e):
+    return render_template('500_server_error.html'), 500
+
 @app.template_filter()
 def fecha_local_CDMX(fecha: datetime) -> datetime:
     return fecha + timedelta(hours=-6)# CDMX eata en UTC-6
