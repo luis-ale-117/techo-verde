@@ -1,5 +1,6 @@
 const latitud = document.getElementById('latitud')
 const longitud = document.getElementById('longitud')
+const nombre_establecimiento = document.getElementById('nombre_establecimiento')
 const divMap = document.getElementById('map')
 
 let map = null
@@ -23,12 +24,11 @@ const refrescarMapa = (lat, long) => {
         marker.remove()
     }
     marker = L.marker([lat, long]).addTo(map);
-    marker.bindPopup("<b>Hello world!</b><br>I am a popup.")//.openPopup();
+    marker.bindPopup(`<b>${nombre_establecimiento?.value}</b>`)//.openPopup();
 }
 
 latitud?.addEventListener('change', _ => {
     // @ts-ignore
-    console.log(`${latitud.value}, ${longitud.value}`)
     const lat = parseFloat(latitud.value)
     const long = parseFloat(longitud?.value)
     refrescarMapa(lat, long)
@@ -36,9 +36,15 @@ latitud?.addEventListener('change', _ => {
 
 longitud?.addEventListener('change', _ => {
     // @ts-ignore
-    console.log(`${latitud.value}, ${longitud.value}`)
     const lat = parseFloat(latitud?.value)
     const long = parseFloat(longitud.value)
+    refrescarMapa(lat, long)
+})
+
+nombre_establecimiento?.addEventListener('change', _ => {
+    // @ts-ignore
+    const lat = parseFloat(latitud?.value)
+    const long = parseFloat(longitud?.value)
     refrescarMapa(lat, long)
 })
 
