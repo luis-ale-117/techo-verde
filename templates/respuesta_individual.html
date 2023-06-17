@@ -13,6 +13,9 @@
     <!--Estilos propios-->
     <link rel="stylesheet" href="{{url_for('static', filename='styles/map.css')}}" />
     <link rel="stylesheet" href="{{url_for('static', filename='styles/styles.css')}}" />
+    <!--Leatleaf JS-->
+    <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
+    <script src="{{url_for('static', filename='leaflet/leaflet.js')}}"></script>
     <title>Resgistro techos verdes</title>
 </head>
 
@@ -27,31 +30,32 @@
             <h4 class="h4">Fecha: {{ respuesta.fecha_creacion|fecha_local_CDMX }} CDMX</h4>
         </div>
         <br>
-        <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel" data-bs-theme="dark">
+        <div id="carouselExample" class="carousel slide" data-bs-theme="dark">
             <div class="carousel-inner">
                 {% for imagen in respuesta.imagenes %}
+                {% if loop.index == 1 %}
                 <div class="carousel-item active">
+                {% else %}
+                <div class="carousel-item">
+                {% endif %}
                     <img src="data:image/{{ imagen.nombre|extension }};base64,{{ imagen.imagen|imagen_base64 }}"
                         class="d-block w-100" alt="{{ imagen.nombre }}">
-                    <div class="carousel-caption d-none d-md-block">
-                        <p>{{ imagen.nombre }}</p>
-                    </div>
                 </div>
                 {% endfor %}
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
                 data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
                 data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
         <table class="table">
-            
+
             <thead>
                 {% if respuesta.aprobado %}
                 <tr class="table-success text-center">
@@ -118,50 +122,65 @@
                 {% endif %}
                 <tr>
                     <td scope="row">Link de la ubicacion</td>
-                    <td><a href="{{ respuesta.datos['link_ubicacion'] }}" target="_blank" rel="noopener noreferrer">{{ respuesta.datos['link_ubicacion'] }}</a></td>
+                    <td><a href="{{ respuesta.datos['link_ubicacion'] }}" target="_blank" rel="noopener noreferrer">{{
+                            respuesta.datos['link_ubicacion'] }}</a></td>
                 </tr>
             </tbody>
         </table>
         <br>
-        <form id="registro" method="POST" action="/guardar_registro" enctype="multipart/form-data" class="row g-2">
-            <!--SUPERFICIE DEL TECHO VERDE-->
-            <div class="col-md-6">
-                <label for="superficie" class="form-label">Superficie del techo en m2</label>
-                <input id="superficie" name="superficie" type="number" value="1" min="1" max="10000" required
+        <form id="actualizar" action="/admin/respuestas/{{ respuesta.id }}" method="POST" class="row g-3">
+            <!--NOMBRE DEL ESTABLECIMIENTO-->
+            <div class="col-md-3">
+                <label for="nombre_establecimiento" class="form-label">Nombre del establecimiento</label>
+                {% if respuesta.nombre_establecimiento != None %}
+                <input id="nombre_establecimiento" name="nombre_establecimiento" type="text" placeholder="Ejemplo: Palacio de Bellas Artes" value="{{ respuesta.nombre_establecimiento }}" required
                     class="form-control"></input>
+                {% else %}
+                <input id="nombre_establecimiento" name="nombre_establecimiento" type="text" placeholder="Ejemplo: Palacio de Bellas Artes" required
+                    class="form-control"></input>
+                {% endif %}
             </div>
-
-            <!--TIPO DE INMUEBLE-->
-            <div class="col-md-6">
-                <label for="tipo_inmueble" class="form-label">Tipo de inmueble</label>
-                <select id="tipo_inmueble" name="tipo_inmueble" required class="form-select">
-                    <option value="casa-habitacion" default>Casa habitacion</option>
-                    <option value="edificio-de-departamentos">Edificio de departamentos</option>
-                    <option value="local-comercial">Local comercial</option>
-                    <option value="oficinas privadas">Oficinas privadas</option>
-                </select>
+            <!--COORDENADAS-->
+            <div class="col-md-3">
+                <label for="latitud" class="form-label">Latitud</label>
+                {% if respuesta.latitud != None %}
+                <input id="latitud" name="latitud" type="number" placeholder="Ejemplo: 12.34372" step="0.00001" required
+                    min="-180.000" max="180.000" value="{{ respuesta.latitud }}" class="form-control"></input>
+                {% else %}
+                <input id="latitud" name="latitud" type="number" placeholder="Ejemplo: 12.34372" step="0.00001" required
+                    min="-180.000" max="180.000" class="form-control"></input>
+                {% endif %}
             </div>
-
-            <!--¿SOLICITASTE EL BENEFICIO FISCAL?-->
-            <div class="col-md-6">
-                <label class="form-label">¿Solicitaste el beneficio fiscal del 10% en la reducción del impuesto
-                    predial?</label>
-                <div class="form-check">
-                    <input id="beneficio_fiscal_si" name="beneficio_fiscal" type="radio" value="si" checked required
-                        class="form-check-input"></input>
-                    <label for="beneficio_fiscal_si" class="form-check-label">Si</label>
+            <div class="col-md-3">
+                <label for="longitud" class="form-label">Longitud</label>
+                {% if respuesta.longitud != None %}
+                <input id="longitud" name="longitud" type="number" placeholder="Ejemplo: -82.34372" step="0.00001" required
+                    min="-180.000" max="180.000" value="{{ respuesta.longitud }}" class="form-control"></input>
+                {% else %}
+                <input id="longitud" name="longitud" type="number" placeholder="Ejemplo: -82.34372" step="0.00001" required
+                    min="-180.000" max="180.000" class="form-control"></input>
+                {% endif %}
+            </div>
+            <!--APROBAR/DESAPROBAR-->
+            <div class="col-md-3">
+                <label class="form-check-label">Aprobado</label>
+                <div class="form-check form-switch">
+                {% if respuesta.aprobado %}
+                <input name="aprobado" type="checkbox" value="si" role="switch" class="form-check-input" checked></input>
+                {% else %}
+                <input name="aprobado" type="checkbox" value="si" role="switch" class="form-check-input"></input>
+                {% endif %}
                 </div>
-                <div class="form-check">
-                    <input id="beneficio_fiscal_no" name="beneficio_fiscal" type="radio" value="no"
-                        class="form-check-input"></input>
-                    <label for="beneficio_fiscal_no" class="form-check-label">No</label>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <button id="enviar_formulario" type="submit" class="btn btn-primary">Actualizar</button>
             </div>
         </form>
+        <br>
+        <div class="btn-group" role="group" aria-label="Basic example">
+                <button id="enviar_formulario" type="button" class="btn btn-primary">Actualizar</button>
+                <button id="borrar_respuesta" type="button" data-respuesta="{{respuesta.id}}" class="btn btn-danger">Borrar</button>
+        </div>
+        <br>
+        <div id="map" class="invisible">
+        </div>
     </main>
     <footer class="container">
         {% include 'footer.html'%}

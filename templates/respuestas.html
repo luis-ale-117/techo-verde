@@ -6,11 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="{{url_for('static', filename='img/arbol.png')}}" />
-    <!--Para usar la libreria 'letleaf'-->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <!--Bootstrap CSS-->
     <link rel="stylesheet" href="{{url_for('static', filename='styles/bootstrap.min.css')}}" />
     <!--Bootstrap JS-->
@@ -55,7 +50,7 @@
                     <td><button type="button" class="btn"><a href="/admin/respuestas/{{ resp.id }}"><img
                                     src="{{url_for('static', filename='img/ver-detalles.png')}}"
                                     alt="Detalles"></a></button></td>
-                    <td><button type="button" class="btn borrar" data-id="{{ resp.id }}" data><img
+                    <td><button id="borrar_respuesta" type="button" class="btn" data-respuesta="{{resp.id}}" data><img
                                 src="{{url_for('static', filename='img/borrar.png')}}" alt="Borrar"></button></td>
                 </tr>
                 {% endfor %}
