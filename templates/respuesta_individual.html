@@ -154,10 +154,10 @@
             <div class="col-md-3">
                 <label for="longitud" class="form-label">Longitud</label>
                 {% if respuesta.longitud != None %}
-                <input id="longitud" name="longitud" type="number" placeholder="Ejemplo: -82.34372" step="0.00001" required
+                <input id="longitud" name="longitud" type="number" placeholder="Ejemplo: -82.34372" step="0.00000000000001" required
                     min="-180.000" max="180.000" value="{{ respuesta.longitud }}" class="form-control"></input>
                 {% else %}
-                <input id="longitud" name="longitud" type="number" placeholder="Ejemplo: -82.34372" step="0.00001" required
+                <input id="longitud" name="longitud" type="number" placeholder="Ejemplo: -82.34372" step="0.00000000000001" required
                     min="-180.000" max="180.000" class="form-control"></input>
                 {% endif %}
             </div>
@@ -179,7 +179,7 @@
                 <button id="borrar_respuesta" type="button" data-respuesta="{{respuesta.id}}" class="btn btn-danger">Borrar</button>
         </div>
         <br>
-        <div id="map" class="invisible">
+        <div id="map" class="map invisible">
         </div>
     </main>
     <footer class="container">

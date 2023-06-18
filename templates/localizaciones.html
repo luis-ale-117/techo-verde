@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{url_for('static', filename='img/arbol.png')}}" />
+    <!--Bootstrap CSS-->
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/bootstrap.min.css')}}" />
+    <!--Bootstrap JS-->
+    <script src="{{url_for('static', filename='scripts/bootstrap.min.js')}}"></script>
+    <!--Estilos propios-->
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/map.css')}}" />
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/styles.css')}}" />
+    <!--Leatleaf JS-->
+    <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
+    <script src="{{url_for('static', filename='leaflet/leaflet.js')}}"></script>
+    <title>Resgistro techos verdes</title>
+</head>
+
+<body class="bg-secondary-subtle">
+    <header>
+        {% include 'navbar.html'%}
+    </header>
+    <br>
+    <main class="container">
+        <div class="text-center">
+            <h1 class="h1">Localizaciones de techos verdes en CDMX</h1>
+        </div>
+        <br>
+        <div id="map" class="map-big">
+        </div>
+    </main>
+    <footer class="container">
+        {% include 'footer.html'%}
+    </footer>
+    <!--MUESTRA LAS LOCALIZACIONES REGISTRADAS-->
+    <script>
+        const map = L.map('map').setView([19.3759, -99.1276], 10)
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+        let id = null
+        let lat = null
+        let long = null
+        let nombre = null
+        let tipo_inmueble = null
+        let vegetacion = null
+        let tipo_techo = null
+        let superficie = null
+
+        {% for localizacion in localizaciones %}
+            id = "{{ localizacion.id }}"
+            nombre = "{{ localizacion.nombre_establecimiento }}"
+            lat = parseFloat("{{ localizacion.latitud }}")
+            long = parseFloat("{{ localizacion.longitud }}")
+            tipo_inmueble = "{{ localizacion.datos['tipo_inmueble'] }}"
+            vegetacion = "{{ localizacion.datos['vegetacion'] }}"
+            tipo_techo = "{{ localizacion.datos['tipo_techo'] }}"
+            superficie = "{{ localizacion.datos['superficie'] }}"
+            L.marker([lat, long]).addTo(map).bindPopup(`
+                <b>${nombre}</b><br>
+                Inmueble: ${tipo_inmueble}<br>
+                Vegetacion: ${vegetacion}<br>
+                Tipo de techo: ${tipo_techo}<br>
+                Superficie: ${superficie} m<sup>2</sup><br>
+                <a href="/localizaciones/${id}">Ver</a>
+            `)
+        {% endfor %}
+    </script>
+</body>
+
+</html>

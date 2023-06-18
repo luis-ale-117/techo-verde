@@ -1,22 +1,23 @@
 import os
-from flask import Flask, render_template, request, jsonify, redirect
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.mysql import LONGBLOB, JSON
 from datetime import datetime, timezone, timedelta
 
-import pymysql
-import pickle
 import base64
 
 app = Flask(__name__)
 
-DB_USER = os.getenv("DB_USER","techouser")
-DB_PASS = os.getenv("DB_PASS", "techouser")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "3306")
-DB_NAME = os.getenv("DB_NAME","techodb")
-
-app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DB_URI = os.getenv("DB_URI")
+if DB_URI is not None:
+    app.config["SQLALCHEMY_DATABASE_URI"] = DB_URI
+else:
+    DB_USER = os.getenv("DB_USER","techouser")
+    DB_PASS = os.getenv("DB_PASS", "techouser")
+    DB_HOST = os.getenv("DB_HOST", "localhost")
+    DB_PORT = os.getenv("DB_PORT", "3306")
+    DB_NAME = os.getenv("DB_NAME","techodb")
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
 
@@ -31,8 +32,8 @@ class Formulario(db.Model):
     fecha_creacion = db.Column(db.DateTime, nullable=False)
     aprobado = db.Column(db.Boolean, nullable=False, default=False)
     nombre_establecimiento = db.Column(db.String(255))
-    latitud = db.Column(db.Float)
-    longitud = db.Column(db.Float)
+    latitud = db.Column(db.Float(precision=32, decimal_return_scale=None))
+    longitud = db.Column(db.Float(precision=32, decimal_return_scale=None))
     imagenes = db.relationship('Imagen', cascade='all, delete', backref='formulario', lazy=True)
 
 class Imagen(db.Model):
@@ -88,6 +89,16 @@ def guardar_registro():
     db.session.commit()
     return redirect("/guardado_exitoso")
 
+@app.route('/localizaciones')
+def ver_localizaciones():
+    localizaciones = Formulario.query.filter_by(aprobado=True).all()
+    return render_template("localizaciones.html", localizaciones=localizaciones)
+
+@app.route('/localizaciones/<int:localizacion_id>')
+def ver_localizacion_individual(localizacion_id: int):
+    localizacion= Formulario.query.filter_by(id=localizacion_id, aprobado=True).first()
+    return render_template("localizacion_individual.html", localizacion=localizacion)
+
 @app.route("/admin/respuestas", methods=["GET"])
 def obtener_respuestas():
     respuestas = Formulario.query.all()
@@ -106,6 +117,8 @@ def actualizar_respuesta(formulario_id: int):
     respuesta.longitud = request.form.get("longitud")
     respuesta.aprobado = request.form.get("aprobado") == "si"
     db.session.commit()
+    print(f"{request.form.get('latitud')}")
+    print(f"{request.form.get('longitud')}")
     return redirect(f"/admin/respuestas/{formulario_id}")
 
 @app.route("/admin/respuestas/<int:formulario_id>", methods=["DELETE"])

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{url_for('static', filename='img/arbol.png')}}" />
+    <!--Bootstrap CSS-->
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/bootstrap.min.css')}}" />
+    <!--Bootstrap JS-->
+    <script src="{{url_for('static', filename='scripts/bootstrap.min.js')}}"></script>
+    <!--Estilos propios-->
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/map.css')}}" />
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/styles.css')}}" />
+    <!--Leatleaf JS-->
+    <link rel="stylesheet" href="{{url_for('static', filename='leaflet/leaflet.css')}}" />
+    <script src="{{url_for('static', filename='leaflet/leaflet.js')}}"></script>
+    <title>Resgistro techos verdes</title>
+</head>
+
+<body class="bg-secondary-subtle">
+    <header>
+        {% include 'navbar.html'%}
+    </header>
+    <br>
+    <main class="container">
+        <div class="text-center">
+            <h1 class="h1">{{ localizacion.nombre_establecimiento }}</h1>
+        </div>
+        <br>
+        <table class="table">
+
+            <thead>
+                <tr class="table-success text-center">
+                    <th colspan="2">Informacion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td scope="row">Tipo de techo</td>
+                    <td>{{ localizacion.datos['tipo_techo'] }}</td>
+                </tr>
+                <tr>
+                    <td scope="row">Vegetacion</td>
+                    <td>{{ localizacion.datos['vegetacion'] }}</td>
+                </tr>
+                <tr>
+                    <td scope="row">Superficie en m<sup>2</sup></td>
+                    <td>{{ localizacion.datos['superficie'] }}</td>
+                </tr>
+                <tr>
+                    <td scope="row">Tipo de inmueble</td>
+                    <td>{{ localizacion.datos['tipo_inmueble'] }}</td>
+                </tr>
+                <tr>
+                    <td scope="row">Numero de pisos del inmueble</td>
+                    <td>{{ localizacion.datos['numero_pisos'] }}</td>
+                </tr>
+                <tr>
+                    <td scope="row">Techo verde en el ultimo piso</td>
+                    <td>{{ localizacion.datos['ubicacion_ultimo_piso'] }}</td>
+                </tr>
+                {% if localizacion.datos['ubicacion_ultimo_piso'] == 'no' %}
+                <tr>
+                    <td scope="row">Piso del techo verde</td>
+                    <td>{{ localizacion.datos['otro_piso'] }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td scope="row">Solicito beneficio fiscal</td>
+                    <td>{{ localizacion.datos['beneficio_fiscal'] }}</td>
+                </tr>
+                <tr>
+                    <td scope="row">Instalacion</td>
+                    <td>{{ localizacion.datos['instalacion'] }}</td>
+                </tr>
+                {% if localizacion.datos['instalacion'] == 'empresa' %}
+                <tr>
+                    <td scope="row">Empresa instaladora</td>
+                    <td>{{ localizacion.datos['empresa_instaladora'] }}</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <br>
+        <div style="width: 100%">
+            <iframe scrolling="no" marginheight="0" marginwidth="0"
+            src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=es&amp;q={{ localizacion.latitud }},%20{{ localizacion.longitud }}+(nom)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
+            width="100%" height="600" frameborder="0">
+            <a href="https://www.gps.ie/car-satnav-gps/">Sat Navs</a></iframe>
+        </div>
+        <br>
+        <div class="text-center">
+            <h3 class="h3">Imagenes</h3>
+        </div>
+        <br>
+        <div id="carouselExample" class="carousel slide" data-bs-theme="dark">
+            <div class="carousel-inner">
+                {% for imagen in localizacion.imagenes %}
+                {% if loop.index == 1 %}
+                <div class="carousel-item active">
+                {% else %}
+                <div class="carousel-item">
+                {% endif %}
+                    <img src="data:image/{{ imagen.nombre|extension }};base64,{{ imagen.imagen|imagen_base64 }}"
+                        class="d-block w-100" alt="{{ imagen.nombre }}">
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </main>
+    <footer class="container">
+        {% include 'footer.html'%}
+    </footer>
+</body>
+
+</html>
