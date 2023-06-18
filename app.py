@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.mysql import LONGBLOB, JSON
+from sqlalchemy.dialects.postgresql import BYTEA, JSON
 from datetime import datetime, timezone, timedelta
 
 import base64
@@ -15,9 +15,9 @@ else:
     DB_USER = os.getenv("DB_USER","techouser")
     DB_PASS = os.getenv("DB_PASS", "techouser")
     DB_HOST = os.getenv("DB_HOST", "localhost")
-    DB_PORT = os.getenv("DB_PORT", "3306")
+    DB_PORT = os.getenv("DB_PORT", "5432")
     DB_NAME = os.getenv("DB_NAME","techodb")
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
 
@@ -39,7 +39,7 @@ class Formulario(db.Model):
 class Imagen(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(255), nullable=False)
-    imagen = db.Column(LONGBLOB) # LongBlob en MySQL
+    imagen = db.Column(BYTEA) # LongBlob en MySQL
     formulario_id = db.Column(db.Integer, db.ForeignKey('formulario.id'), nullable=False)
 
 with app.app_context():
