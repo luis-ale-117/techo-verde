@@ -6,11 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="{{url_for('static', filename='img/arbol.png')}}" />
-    <!--Para usar la libreria 'letleaf'-->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <!--Bootstrap CSS-->
     <link rel="stylesheet" href="{{url_for('static', filename='styles/bootstrap.min.css')}}" />
     <!--Bootstrap JS-->
@@ -26,17 +21,15 @@
         {% include 'navbar.html'%}
     </header>
     <br>
-    <main class="container">
-        <div class="text-center">
-            <h1 class="h1">Techos verdes en la CDMX</h1>
-        </div>
+    <main class="container text-center">
+        <h1 class="display-1">Gracias por registrarte</h1>
         <br>
-
+        <h3 class="display-6">Ahora ya puedes registrar techos verdes</h3>
+        <img src="{{url_for('static', filename='img/comprobado.png')}}" class="img-fluid" alt="Imagen de exito">
     </main>
     <footer class="container">
         {% include 'footer.html'%}
     </footer>
-    <script src="{{url_for('static', filename='scripts/registro.js')}}"></script>
 </body>
 
 </html>

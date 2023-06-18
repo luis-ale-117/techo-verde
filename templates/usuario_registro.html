@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{url_for('static', filename='img/arbol.png')}}" />
+    <!--Bootstrap CSS-->
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/bootstrap.min.css')}}" />
+    <!--Bootstrap JS-->
+    <script src="{{url_for('static', filename='scripts/bootstrap.min.js')}}"></script>
+    <!--Estilos propios-->
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/map.css')}}" />
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/styles.css')}}" />
+    <title>Resgistro techos verdes</title>
+</head>
+
+<body class="bg-secondary-subtle">
+    <header>
+        {% include 'navbar.html'%}
+    </header>
+    <br>
+    <main class="container">
+        <div class="text-center">
+            <h1 class="h1">Registrate</h1>
+            <h4 class="h4">Y ayudanos a compartir donde hay techos verdes en la CDMX</h4>
+        </div>
+        <br>
+        <form id="registro" method="POST" action="/usuario/registro" class="row g-2">
+            <div class="col-md-6">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input id="nombre" name="nombre" type="text" placeholder="Sara Ortega"
+                    required class="form-control"></input>
+            </div>
+            <div class="col-md-6">
+                <label for="correo" class="form-label">Correo</label>
+                <input id="correo" name="correo" type="email" placeholder="correo@ejemplo.com"
+                    required class="form-control"></input>
+            </div>
+            <div class="col-md-6">
+                <label for="contrasena" class="form-label">Contraseña</label>
+                <input id="contrasena" name="contrasena" type="password" placeholder="c0ntr4s3n4-**s3gur4" minlength="8"
+                    required class="form-control"></input>
+            </div>
+            <div class="col-md-6">
+                <label for="contrasena_2" class="form-label">Confirma contraseña</label>
+                <input id="contrasena_2" name="contrasena_2" type="password" placeholder="c0ntr4s3n4-**s3gur4" minlength="8"
+                    required class="form-control"></input>
+            </div>
+            <div class="col-md-6">
+                <button id="enviar_usuario" type="submit" class="btn btn-primary">Enviar</button>
+            </div>
+        </form>
+    </main>
+    <footer class="container">
+        {% include 'footer.html'%}
+    </footer>
+    <script src="{{url_for('static', filename='scripts/usuario_registro.js')}}"></script>
+</body>
+
+</html>
