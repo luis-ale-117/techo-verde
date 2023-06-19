@@ -7,21 +7,28 @@
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active underline-on-hover" aria-current="page" href="/registro">Registrar techo</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link active underline-on-hover" aria-current="page" href="/localizaciones">Localizaciones</a>
                 </li>
+                {% if usuario %}
+                <li class="nav-item">
+                    <a class="nav-link active underline-on-hover" aria-current="page" href="/registro">Registrar techo</a>
+                </li>
+                    {% if usuario.admin %}
+                    <li class="nav-item">
+                        <a class="nav-link active underline-on-hover" aria-current="page" href="/admin/respuestas">Ver respuestas</a>
+                    </li>
+                    {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link active underline-on-hover" aria-current="page" href="/usuario/cerrar_sesion">Cerrar sesion</a>
+                </li>
+                {% else %}
                 <li class="nav-item">
                     <a class="nav-link active underline-on-hover" aria-current="page" href="/usuario/registro">Registrate</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active underline-on-hover" aria-current="page" href="/usuario/inicio_sesion">Iniciar sesion</a>
                 </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link active underline-on-hover" aria-current="page"
-                        href="/atribucion">Atribuciones</a>
-                </li> -->
+                {% endif %}
             </ul>
         </div>
     </div>

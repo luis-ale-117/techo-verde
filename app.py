@@ -1,8 +1,8 @@
 import os
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import BYTEA, JSON
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import base64
@@ -21,6 +21,8 @@ else:
     app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
+app.secret_key = os.getenv("APP_SECRET_KEY", "my super secret key")
+app.permanent_session_lifetime = timedelta(days=1)
 
 db = SQLAlchemy(app)
 
@@ -60,22 +62,13 @@ class Imagen(db.Model):
 
 with app.app_context():
     db.create_all()
-
-@app.route("/registro")
-def registro():
-    return render_template("registro.html")
-
-@app.route("/atribucion")
-def atribucion():
-    return render_template("atribucion.html")
-
-@app.route("/guardado_exitoso")
-def guardado_exitoso():
-    return render_template("guardado_exitoso.html")
-
-@app.route("/usuario_registrado_exitoso")
-def usuario_registrado_exitoso():
-    return render_template("usuario_registro_exitoso.html")
+    if not Usuario.query.filter_by(admin=True).all():
+        ADMIN_NOMBRE = os.getenv("ADMIN_NOMBRE", "admin")
+        ADMIN_CORREO = os.getenv("ADMIN_CORREO", "admin@prueba.com")
+        ADMIN_CONTRASENA = os.getenv("ADMIN_CONTRASENA", "qwertyuiop")
+        admin = Usuario(ADMIN_NOMBRE, ADMIN_CORREO, ADMIN_CONTRASENA, True)
+        db.session.add(admin)
+        db.session.commit()
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -100,9 +93,41 @@ def imagen_base64(img) -> str:
 def allowed_file(filename: str) -> bool:
     return '.' in filename and filename.split('.')[-1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+@app.route("/registro")
+def registro():
+    usuario = None
+    if 'usuario_id' in session:
+        usuario = Usuario.query.get_or_404(session['usuario_id'])
+    return render_template("registro.html", usuario=usuario)
+
+@app.route("/atribucion")
+def atribucion():
+    usuario = None
+    if 'usuario_id' in session:
+        usuario = Usuario.query.get_or_404(session['usuario_id'])
+    return render_template("atribucion.html", usuario=usuario)
+
+@app.route("/guardado_exitoso")
+def guardado_exitoso():
+    usuario = None
+    if 'usuario_id' in session:
+        usuario = Usuario.query.get_or_404(session['usuario_id'])
+    return render_template("guardado_exitoso.html", usuario = usuario)
+
+@app.route("/usuario_registrado_exitoso")
+def usuario_registrado_exitoso():
+    usuario = None
+    if 'usuario_id' in session:
+        usuario = Usuario.query.get_or_404(session['usuario_id'])
+    return render_template("usuario_registro_exitoso.html", usuario=usuario)
+
 @app.route('/guardar_registro', methods=['POST'])
 def guardar_registro():
-    formulario = Formulario(datos=dict(request.form), fecha_creacion=datetime.utcnow())
+    usuario = None
+    if 'usuario_id' not in session:
+        return redirect("/usuario/inicio_sesion")
+    usuario = Usuario.query.get_or_404(session['usuario_id'])
+    formulario = Formulario(datos=dict(request.form), fecha_creacion=datetime.utcnow(), usuario=usuario)
     db.session.add(formulario)
     imagenes = request.files.getlist("imagenes")
     for img in imagenes:
@@ -115,17 +140,26 @@ def guardar_registro():
 @app.route('/')
 def index():
     localizaciones = Formulario.query.filter_by(aprobado=True).all()
-    return render_template("localizaciones.html", localizaciones=localizaciones)
+    usuario = None
+    if 'usuario_id' in session:
+        usuario = Usuario.query.get_or_404(session['usuario_id'])
+    return render_template("localizaciones.html", localizaciones=localizaciones, usuario=usuario)
 
 @app.route('/localizaciones')
 def ver_localizaciones():
     localizaciones = Formulario.query.filter_by(aprobado=True).all()
-    return render_template("localizaciones.html", localizaciones=localizaciones)
+    usuario = None
+    if 'usuario_id' in session:
+        usuario = Usuario.query.get_or_404(session['usuario_id'])
+    return render_template("localizaciones.html", localizaciones=localizaciones, usuario=usuario)
 
 @app.route('/localizaciones/<int:localizacion_id>')
 def ver_localizacion_individual(localizacion_id: int):
     localizacion= Formulario.query.filter_by(id=localizacion_id, aprobado=True).first()
-    return render_template("localizacion_individual.html", localizacion=localizacion)
+    usuario = None
+    if 'usuario_id' in session:
+        usuario = Usuario.query.get_or_404(session['usuario_id'])
+    return render_template("localizacion_individual.html", localizacion=localizacion, usuario=usuario)
 
 def validar_campos_usuario(nombre, correo, contrasena, contrasena_2) -> bool:
     if nombre is None or correo is None or contrasena is None or contrasena_2 is None:
@@ -135,17 +169,25 @@ def validar_campos_usuario(nombre, correo, contrasena, contrasena_2) -> bool:
 
 @app.route("/usuario/registro")
 def usuario_registro():
+    if 'usuario_id' in session:
+        usuario = Usuario.query.get_or_404(session['usuario_id'])
+        return redirect("/")
     return render_template("usuario_registro.html")
-
 
 @app.route("/usuario/registro", methods=["POST"])
 def usuario_registro_guardar():
+    if 'usuario_id' in session:
+        usuario = Usuario.query.get_or_404(session['usuario_id'])
+        return redirect("/")
     nombre = request.form.get("nombre")
     correo = request.form.get("correo")
     contrasena = request.form.get("contrasena")
     contrasena_2 = request.form.get("contrasena_2")
     if validar_campos_usuario(nombre, correo, contrasena, contrasena_2):
         return "Campos invalidos", 400
+    usuario = Usuario.query.filter_by(correo=correo).first()
+    if usuario:
+        return "Correo no ya en uso", 400
     usuario = Usuario(nombre, correo, contrasena)
     db.session.add(usuario)
     db.session.commit()
@@ -153,7 +195,8 @@ def usuario_registro_guardar():
 
 @app.route("/usuario/inicio_sesion")
 def usuario_inicio_sesion():
-    return render_template("usuario_inicio_sesion.html")
+    usuario = session.get("usuario_id")
+    return render_template("usuario_inicio_sesion.html", usuario=usuario)
 
 @app.route("/usuario/inicio_sesion", methods=["POST"])
 def usuario_inicio_sesion_iniciar():
@@ -163,22 +206,48 @@ def usuario_inicio_sesion_iniciar():
     if not usuario:
         return "Correo no encontrado", 404
     elif usuario.checa_contrasena(contrasena):
+        session.permanent = True
+        session["usuario_id"] = usuario.id
         return redirect("/")
     else:
         return "Contrasena incorrecta", 400
+    
+@app.route('/usuario/cerrar_sesion')
+def cerrar_sesion():
+    session.pop('usuario_id', None)
+    return redirect('/')
+
 
 @app.route("/admin/respuestas", methods=["GET"])
 def obtener_respuestas():
+    usuario = None
+    if "usuario_id" not in session:
+        return redirect("/usuario/inicio_sesion")
+    usuario = Usuario.query.get_or_404(session["usuario_id"])
+    if not usuario.admin:
+        return render_template("403_forbbiden.html", usuario=usuario)
     respuestas = Formulario.query.all()
-    return render_template("respuestas.html", respuestas=respuestas)
+    return render_template("respuestas.html", respuestas=respuestas, usuario=usuario)
 
 @app.route("/admin/respuestas/<int:formulario_id>", methods=["GET"])
 def obtener_respuesta_individual(formulario_id: int):
+    usuario = None
+    if 'usuario_id' not in session:
+        redirect("/usuario/inicio_sesion")
+    usuario = Usuario.query.get_or_404(session['usuario_id'])
+    if not usuario.admin:
+        render_template("403_forbbiden.html", usuario=usuario)
     respuesta = Formulario.query.get_or_404(formulario_id)
-    return render_template("respuesta_individual.html", respuesta=respuesta)
+    return render_template("respuesta_individual.html", respuesta=respuesta, usuario=usuario)
 
 @app.route("/admin/respuestas/<int:formulario_id>", methods=["POST"])
 def actualizar_respuesta(formulario_id: int):
+    usuario = None
+    if 'usuario_id' not in session:
+        redirect("/usuario/inicio_sesion")
+    usuario = Usuario.query.get_or_404(session['usuario_id'])
+    if not usuario.admin:
+        render_template("403_forbbiden.html", usuario=usuario)
     respuesta = Formulario.query.get_or_404(formulario_id)
     respuesta.nombre_establecimiento = request.form.get("nombre_establecimiento")
     respuesta.latitud = request.form.get("latitud")
@@ -189,6 +258,12 @@ def actualizar_respuesta(formulario_id: int):
 
 @app.route("/admin/respuestas/<int:formulario_id>", methods=["DELETE"])
 def eliminar_respuesta(formulario_id: int):
+    usuario = None
+    if 'usuario_id' not in session:
+        redirect("/usuario/inicio_sesion")
+    usuario = Usuario.query.get_or_404(session['usuario_id'])
+    if not usuario.admin:
+        render_template("403_forbbiden.html", usuario=usuario)
     respuesta = Formulario.query.get_or_404(formulario_id)
     db.session.delete(respuesta)
     db.session.commit()
