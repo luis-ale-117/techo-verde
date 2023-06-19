@@ -1,5 +1,6 @@
 import os
 from flask import Flask, render_template, request, redirect, session
+from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import BYTEA, JSON
 from datetime import datetime, timedelta
@@ -24,6 +25,14 @@ app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
 app.secret_key = os.getenv("APP_SECRET_KEY", "my super secret key")
 app.permanent_session_lifetime = timedelta(days=1)
 
+app.config['MAIL_SERVER'] = os.getenv("MAIL_SERVER", "smtp.gmail.com")
+app.config["MAIL_PORT"] = os.getenv("MAIL_PORT", 465)
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD") # No la contrasena del correo, checar: https://youtu.be/g_j6ILT-X0k
+app.config["MAIL_USE_TLS"] = os.getenv("MAIL_USE_TLS", False)
+app.config["MAIL_USE_SSL"] = os.getenv("MAIL_USE_SSL", True)
+mail = Mail(app)
+
 db = SQLAlchemy(app)
 
 class Usuario(db.Model):
@@ -32,6 +41,7 @@ class Usuario(db.Model):
     correo = db.Column(db.String(128), nullable=False, unique=True)
     contrasena_hash = db.Column(db.String(128), nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
+    # confirmado = db.Column(db.Boolean, nullable=False, default=False)
     formularios = db.relationship('Formulario', cascade='all, delete', backref='usuario', lazy=True)
 
     def __init__(self, nombre:str, correo:str, contrasena:str, admin:bool = False):
@@ -268,6 +278,13 @@ def eliminar_respuesta(formulario_id: int):
     db.session.delete(respuesta)
     db.session.commit()
     return "eliminado", 204
+
+@app.route("/test_email")
+def test_email():
+    msg = Message(subject="Prueba envio",sender="noreplay@demo.com", recipients=["ejemplo@email.com"])
+    msg.body = "Hola, una prueba del test"
+    mail.send(msg)
+    return "Mensaje enviado"
 
 if __name__ == "__main__":
     app.run()
