@@ -1,10 +1,11 @@
 import os
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, url_for, flash
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import BYTEA, JSON
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import URLSafeTimedSerializer
 
 import base64
 
@@ -28,10 +29,14 @@ app.permanent_session_lifetime = timedelta(days=1)
 app.config['MAIL_SERVER'] = os.getenv("MAIL_SERVER", "smtp.gmail.com")
 app.config["MAIL_PORT"] = os.getenv("MAIL_PORT", 465)
 app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD") # No la contrasena del correo, checar: https://youtu.be/g_j6ILT-X0k
 app.config["MAIL_USE_TLS"] = os.getenv("MAIL_USE_TLS", False)
 app.config["MAIL_USE_SSL"] = os.getenv("MAIL_USE_SSL", True)
 mail = Mail(app)
+
+app.config["SALT_EMAIL"] = os.getenv("SALT_EMAIL", "my super secret salt")
+serializer = URLSafeTimedSerializer(app.secret_key)
 
 db = SQLAlchemy(app)
 
@@ -41,14 +46,15 @@ class Usuario(db.Model):
     correo = db.Column(db.String(128), nullable=False, unique=True)
     contrasena_hash = db.Column(db.String(128), nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
-    # confirmado = db.Column(db.Boolean, nullable=False, default=False)
+    confirmado = db.Column(db.Boolean, nullable=False, default=False)
     formularios = db.relationship('Formulario', cascade='all, delete', backref='usuario', lazy=True)
 
-    def __init__(self, nombre:str, correo:str, contrasena:str, admin:bool = False):
+    def __init__(self, nombre:str, correo:str, contrasena:str, admin:bool = False, confirmado:bool=False):
         self.nombre = nombre
         self.correo = correo
         self.contrasena_hash = generate_password_hash(contrasena)
         self.admin = admin
+        self.confirmado = confirmado
 
     def checa_contrasena(self, contrasena: str):
         return check_password_hash(self.contrasena_hash, contrasena)
@@ -76,9 +82,25 @@ with app.app_context():
         ADMIN_NOMBRE = os.getenv("ADMIN_NOMBRE", "admin")
         ADMIN_CORREO = os.getenv("ADMIN_CORREO", "admin@prueba.com")
         ADMIN_CONTRASENA = os.getenv("ADMIN_CONTRASENA", "qwertyuiop")
-        admin = Usuario(ADMIN_NOMBRE, ADMIN_CORREO, ADMIN_CONTRASENA, True)
+        admin = Usuario(ADMIN_NOMBRE, ADMIN_CORREO, ADMIN_CONTRASENA, True, True)
         db.session.add(admin)
         db.session.commit()
+
+
+def generate_confirmation_token(email:str):
+    return serializer.dumps(email, salt=app.config['SALT_EMAIL'])
+
+def confirm_token(token, expiration=3600):
+    try:
+        email = serializer.loads(
+            token,
+            salt=app.config['SALT_EMAIL'],
+            max_age=expiration
+        )
+    except:
+        return None
+    return email
+
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -182,7 +204,7 @@ def usuario_registro():
     if 'usuario_id' in session:
         usuario = Usuario.query.get_or_404(session['usuario_id'])
         return redirect("/")
-    return render_template("usuario_registro.html")
+    return render_template("usuario_registro.html", usuario=None)
 
 @app.route("/usuario/registro", methods=["POST"])
 def usuario_registro_guardar():
@@ -194,13 +216,26 @@ def usuario_registro_guardar():
     contrasena = request.form.get("contrasena")
     contrasena_2 = request.form.get("contrasena_2")
     if validar_campos_usuario(nombre, correo, contrasena, contrasena_2):
-        return "Campos invalidos", 400
+        flash("Algun campo es invalido. Intenta de nuevo.", "advertencia")
+        return redirect("/usuario/registro")
     usuario = Usuario.query.filter_by(correo=correo).first()
-    if usuario:
-        return "Correo no ya en uso", 400
-    usuario = Usuario(nombre, correo, contrasena)
+    if usuario and usuario.confirmado:
+        flash("Correo ya en uso.", "advertencia")
+        return redirect("/usuario/registro")
+    elif usuario:
+        # Usuario sin confirmar, actualizalo
+        usuario.nombre = nombre
+        usuario.contrasena = contrasena
+    else:
+        # Crea un nuevo usuario
+        usuario = Usuario(nombre, correo, contrasena)
     db.session.add(usuario)
     db.session.commit()
+    # Generar el token de confirmación de correo electrónico
+    token = generate_confirmation_token(correo)
+    url_confirmacion = url_for("confirmar_correo", token=token, _external=True)
+    temp = render_template("confirmar_correo.html", usuario=None, url_confirmacion=url_confirmacion)
+    enviar_correo(correo, "Confirmacion de correo", temp)
     return redirect("/usuario_registrado_exitoso")
 
 @app.route("/usuario/inicio_sesion")
@@ -212,15 +247,17 @@ def usuario_inicio_sesion():
 def usuario_inicio_sesion_iniciar():
     correo = request.form.get("correo")
     contrasena = request.form.get("contrasena")
-    usuario = Usuario.query.filter_by(correo=correo).first()
+    usuario = Usuario.query.filter_by(correo=correo, confirmado=True).first_or_404()
     if not usuario:
-        return "Correo no encontrado", 404
+        flash("Correo no encontrado", "error")
+        return redirect("/usuario_inicio_sesion")
     elif usuario.checa_contrasena(contrasena):
         session.permanent = True
         session["usuario_id"] = usuario.id
         return redirect("/")
     else:
-        return "Contrasena incorrecta", 400
+        flash("Contraseña incorrecta, intenta de nuevo", "error")
+        return redirect("/usuario_inicio_sesion")
     
 @app.route('/usuario/cerrar_sesion')
 def cerrar_sesion():
@@ -279,12 +316,37 @@ def eliminar_respuesta(formulario_id: int):
     db.session.commit()
     return "eliminado", 204
 
-@app.route("/test_email")
-def test_email():
-    msg = Message(subject="Prueba envio",sender="noreplay@demo.com", recipients=["ejemplo@email.com"])
-    msg.body = "Hola, una prueba del test"
+@app.route('/confirma_correo/<token>')
+def confirmar_correo(token):
+    try:
+        correo = confirm_token(token)
+    except:
+        flash("El token ha expirado, registrate nuevamente.","error")
+        return redirect("/usuario/registro")
+    if correo is None:
+        flash("El token ha expirado, registrate nuevamente.", "error")
+        return redirect("/usuario/registro")
+
+    usuario = Usuario.query.filter_by(correo=correo).first_or_404()
+    if usuario.confirmado:
+        flash('El correo ya ha sido confirmado, por favor inicia sesion', 'exito')
+        return redirect('/usuario/inicio_sesion')
+    else:
+        usuario.confirmado = True
+        db.session.add(usuario)
+        db.session.commit()
+        flash('Haz confirmado tu correo, gracias', 'exito')
+    return redirect('/usuario/inicio_sesion')
+
+
+def enviar_correo(correo: str, asunto:str, template):
+    msg = Message(
+        subject=asunto,
+        sender=app.config["MAIL_DEFAULT_SENDER"],
+        html = template,
+        recipients=[correo],
+    )
     mail.send(msg)
-    return "Mensaje enviado"
 
 if __name__ == "__main__":
     app.run()

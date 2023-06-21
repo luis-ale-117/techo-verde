@@ -23,14 +23,14 @@ const validar_datos = form => {
         return false
     }
     else if (contrasena != contrasena_2){
-        alert("Confirmación de contraseña requerida")
+        alert("La contraseña no es la misma, revisala")
         return false
     }
     return true
 }
-enviar_usuario?.addEventListener('click', e => {
-    if (!validar_datos(formulario)) {
-        return
+formulario?.addEventListener('submit', e => {
+    e.preventDefault()
+    if (validar_datos(formulario)) {
+        formulario?.submit()
     }
-    formulario?.submit()
 })

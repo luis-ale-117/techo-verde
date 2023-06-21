@@ -16,7 +16,7 @@
     <title>Resgistro techos verdes</title>
 </head>
 
-<body class="bg-secondary-subtle">
+<body class="bg-success bg-opacity-50">
     <header>
         {% include 'navbar.html'%}
     </header>
@@ -26,6 +26,25 @@
             <h1 class="h1">Inicia sesion</h1>
         </div>
         <br>
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% if mensajes %}
+        {% for categoria, mensaje in mensajes %}
+            {% if categoria == "exito" %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {% elif categoria == "advertencia" %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {% elif categoria == "error" %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {% else %}
+            <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {% endif %}
+                {{ mensaje }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <br>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
         <form id="registro" method="POST" action="/usuario/inicio_sesion" class="row g-2">
             <div class="col-md-6">
                 <label for="correo" class="form-label">Correo</label>
@@ -45,7 +64,7 @@
     <footer class="container">
         {% include 'footer.html'%}
     </footer>
-    <script src="{{url_for('static', filename='scripts/usuario_inicio_sesison.js')}}"></script>
+    <script src="{{url_for('static', filename='scripts/usuario_inicio_sesion.js')}}"></script>
 </body>
 
 </html>
