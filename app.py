@@ -159,6 +159,10 @@ def guardar_registro():
     if 'usuario_id' not in session:
         return redirect("/usuario/inicio_sesion")
     usuario = Usuario.query.get_or_404(session['usuario_id'])
+    formularios = Formulario.query.filter_by(usuario=usuario, aprobado=False).all()
+    if len(formularios) >= 2:
+        flash("Alcanzaste el limite de 2 formularios pendientes de revision. Espera a que sean aprobados.", "advertencia")
+        return redirect("/registro")
     formulario = Formulario(datos=dict(request.form), fecha_creacion=datetime.utcnow(), usuario=usuario)
     db.session.add(formulario)
     imagenes = request.files.getlist("imagenes")

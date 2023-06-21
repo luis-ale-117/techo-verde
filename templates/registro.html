@@ -27,6 +27,25 @@
     </header>
     <br>
     <main class="container">
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% if mensajes %}
+        {% for categoria, mensaje in mensajes %}
+            {% if categoria == "exito" %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {% elif categoria == "advertencia" %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {% elif categoria == "error" %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {% else %}
+            <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {% endif %}
+                {{ mensaje }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <br>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
         <div class="text-center">
             <h1 class="h1">Registro de techos verdes en la CDMX</h1>
         </div>
