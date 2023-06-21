@@ -163,13 +163,23 @@ def guardar_registro():
     if len(formularios) >= 2:
         flash("Alcanzaste el limite de 2 formularios pendientes de revision. Espera a que sean aprobados.", "advertencia")
         return redirect("/registro")
-    formulario = Formulario(datos=dict(request.form), fecha_creacion=datetime.utcnow(), usuario=usuario)
-    db.session.add(formulario)
+
+    limite_tamano = 5*1024*1024 # 5MB
     imagenes = request.files.getlist("imagenes")
     for img in imagenes:
-        if img.filename != '' and  allowed_file(img.filename):
-            nueva_imagen = Imagen(nombre=img.filename, imagen=img.read(), formulario=formulario)
-            db.session.add(nueva_imagen)
+        if img.filename == '' or not allowed_file(img.filename):
+            flash(f"Nombre o extension del archivo {img.filename} invalido.", "error")
+            return redirect("/registro")
+        elif img.content_length > limite_tamano:
+            flash(f"Tamaño del archivo {img.filename} invalido. Max 5MB.", "error")
+            return redirect("/registro")
+
+    formulario = Formulario(datos=dict(request.form), fecha_creacion=datetime.utcnow(), usuario=usuario)
+    db.session.add(formulario)
+    for img in imagenes:
+        nueva_imagen = Imagen(nombre=img.filename, imagen=img.read(), formulario=formulario)
+        db.session.add(nueva_imagen)
+
     db.session.commit()
     return redirect("/guardado_exitoso")
 
